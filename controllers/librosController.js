@@ -44,21 +44,20 @@ const getLibroById = async (req, res) => {
 
 const addLibro = async (req, res) => {
     try {
-        const { titulo, autor, isbn, editorial, idcategoria } = req.body;
+        const { titulo, autor, isbn, editorial, idcategoria, idautor } = req.body;
         if (!titulo || !autor) {
             return res.status(404).json({
                 succes: false,
                 mensaje: "Titulo y autor son obligatorios."
             })
         }
-        const [libro] = await db.query('INSERT INTO libros (titulo, isbn, editorial, idcategoria, idautor) VALUES (?, ?, ?, ?, ?)', [titulo, autor, isbn, editorial, idcategoria]);
+        const [libro] = await db.query('INSERT INTO libros (titulo, isbn, editorial, idcategoria, idautor) VALUES (?, ?, ?, ?, ?)', [titulo, isbn, editorial, idcategoria, idautor]);
         res.status(201).json({
             succes: true,
             mensaje: "Se creo correctamente",
             data: {
                 id: libro.insertId,
                 titulo,
-                autor,
                 isbn,
                 editorial
             }
@@ -76,7 +75,7 @@ const addLibro = async (req, res) => {
 const actualizarLibro = async (req, res) => {
     try {
         const { id } = req.params;
-        const { titulo, autor, isbn, editorial, idcategoria } = req.body;
+        const { titulo, isbn, editorial, idcategoria, idautor } = req.body;
         const [libro] = await db.query('SELECT * FROM libros WHERE id = ?', [id]);
         if (libro.length === 0) {
             return res.status(404).json({
@@ -84,14 +83,13 @@ const actualizarLibro = async (req, res) => {
                 mensaje: "Libro con id " + id + " no encontrado."
             })
         }
-        const [response] = await db.query('UPDATE libros SET titulo =?,  isbn =?, editorial =?, idcategoria =?, idautor=? where id =? ', [titulo, autor, isbn, editorial, idcategoria, id])
+        const [response] = await db.query('UPDATE libros SET titulo =?,  isbn =?, editorial =?, idcategoria =?, idautor=? where id =? ', [titulo, isbn, editorial, idcategoria, idautor, id])
         res.status(201).json({
             succes: true,
             mensaje: "Se actualizo correctamente",
             data: {
                 id,
                 titulo,
-                autor,
                 isbn,
                 editorial
             }

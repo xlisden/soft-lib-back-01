@@ -11,6 +11,13 @@ const {
 
 /**
  * @swagger
+ * tags:
+ *   name: Libros
+ *   description: CRUD de libros
+ */
+
+/**
+ * @swagger
  * /api/libros:
  *   get:
  *     summary: Obtener todos los libros
@@ -31,6 +38,8 @@ router.get('/', getLibros);
  *       - in: path
  *         name: id
  *         required: true
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
  *         description: Libro encontrado
@@ -52,13 +61,13 @@ router.get('/:id', getLibroById);
  *             properties:
  *               titulo:
  *                 type: string
- *               autor:
- *                 type: integer
  *               isbn:
  *                 type: string
  *               editorial:
  *                 type: string
  *               idcategoria:
+ *                 type: integer
+ *               idautor:
  *                 type: integer
  *     responses:
  *       201:
@@ -70,16 +79,33 @@ router.post('/add', addLibro);
  * @swagger
  * /api/libros/edit/{id}:
  *   put:
- *     summary: Actualizar libro
+ *     summary: Actualizar un libro
  *     tags: [Libros]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         schema:
+ *           type: integer
  *     requestBody:
  *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               titulo:
+ *                 type: string
+ *               isbn:
+ *                 type: string
+ *               editorial:
+ *                 type: string
+ *               idcategoria:
+ *                 type: integer
+ *               idautor:
+ *                 type: integer
  *     responses:
- *       201:
+ *       200:
  *         description: Libro actualizado
  */
 router.put('/edit/:id', actualizarLibro);
@@ -93,8 +119,11 @@ router.put('/edit/:id', actualizarLibro);
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
  *     responses:
- *       201:
+ *       200:
  *         description: Libro eliminado
  */
 router.delete('/delete/:id', eliminarLibro);
@@ -108,9 +137,12 @@ router.delete('/delete/:id', eliminarLibro);
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
- *         description: Libros de la categoría
+ *         description: Lista de libros de la categoría
  */
 router.get('/categoria/:id', getLibrosByCategoria);
 
