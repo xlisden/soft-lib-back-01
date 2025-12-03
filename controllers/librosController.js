@@ -2,9 +2,9 @@ const db = require('../config/db');
 
 const getLibros = async (req, res) => {
     try {
-        const [libros] = await db.query('SELECT * FROM libros ORDER BY id DESC');
+        const [libros] = await db.query('SELECT * FROM libros');
         res.json({
-            succes: true,
+            success: true,
             count: libros.length,
             data: libros
         })
@@ -51,7 +51,7 @@ const addLibro = async (req, res) => {
                 mensaje: "Titulo y autor son obligatorios."
             })
         }
-        const [libro] = await db.query('INSERT INTO libros (titulo, autor, isbn, editorial, idcategoria) VALUES (?, ?, ?, ?, ?)', [titulo, autor, isbn, editorial, idcategoria]);
+        const [libro] = await db.query('INSERT INTO libros (titulo, isbn, editorial, idcategoria, idautor) VALUES (?, ?, ?, ?, ?)', [titulo, autor, isbn, editorial, idcategoria]);
         res.status(201).json({
             succes: true,
             mensaje: "Se creo correctamente",
@@ -84,7 +84,7 @@ const actualizarLibro = async (req, res) => {
                 mensaje: "Libro con id " + id + " no encontrado."
             })
         }
-        const [response] = await db.query('UPDATE libros SET titulo =?, autor =?, isbn =?, editorial =?, idcategoria =? where id =? ', [titulo, autor, isbn, editorial, idcategoria, id])
+        const [response] = await db.query('UPDATE libros SET titulo =?,  isbn =?, editorial =?, idcategoria =?, idautor=? where id =? ', [titulo, autor, isbn, editorial, idcategoria, id])
         res.status(201).json({
             succes: true,
             mensaje: "Se actualizo correctamente",
@@ -142,7 +142,7 @@ const getLibrosByCategoria = async (req, res) => {
                 mensaje: "Categoria con id " + id + " no encontrada."
             })
         }
-        const [libros] = await db.query('SELECT * FROM libros WHERE categoria_id = ?', [id]);
+        const [libros] = await db.query('SELECT * FROM libros WHERE idcategoria = ?', [id]);
         if (libros.length === 0) {
             return res.status(404).json({
                 succes: false,
