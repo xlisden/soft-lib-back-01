@@ -76,6 +76,13 @@ router.post('/add', addCategoria);
  *         required: true
  *     requestBody:
  *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Categoría actualizada

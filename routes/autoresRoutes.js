@@ -76,6 +76,13 @@ router.post('/add', addAutor);
  *         required: true
  *     requestBody:
  *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
  *     responses:
  *       201:
  *         description: autores actualizado
