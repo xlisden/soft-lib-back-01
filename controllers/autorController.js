@@ -23,12 +23,12 @@ const getAutorById = async (req, res) => {
         const [autor] = await db.query('SELECT * FROM autor WHERE id = ?', [id]);
         if (autor.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Autor con id " + id + " no encontrado."
             })
         }
         res.json({
-            succes: true,
+            success: true,
             data: autor
         })
     } catch (error) {
@@ -45,13 +45,13 @@ const addAutor = async (req, res) => {
         const { nombre } = req.body;
         if (!nombre) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "El nombre es obligatorio."
             })
         }
         const [autor] = await db.query('INSERT INTO autor (nombre) VALUES (?)', [nombre]);
         res.status(201).json({
-            succes: true,
+            success: true,
             mensaje: "Se creo correctamente",
             data: {
                 id: autor.insertId,
@@ -74,13 +74,13 @@ const actualizarAutor = async (req, res) => {
         const [autor] = await db.query('SELECT * FROM autor WHERE id = ?', [id]);
         if (autor.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Autor con id " + id + " no encontrado."
             })
         }
         await db.query('UPDATE autor SET nombre = ? WHERE id = ?', [nombre, id]);
         res.status(201).json({
-            succes: true,
+            success: true,
             mensaje: "Se actualizo correctamente",
             data: { id, nombre }
         })
@@ -99,13 +99,13 @@ const eliminarAutor = async (req, res) => {
         const [autor] = await db.query('SELECT * FROM autor WHERE id = ?', [id]);
         if (autor.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Autor con id " + id + " no encontrado."
             })
         }
         await db.query('DELETE FROM autor WHERE id = ?', [id]);
         res.status(201).json({
-            succes: true,
+            success: true,
             mensaje: "Se elimino correctamente"
         })
     } catch (error) {

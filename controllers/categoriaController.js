@@ -4,7 +4,7 @@ const getCategorias = async (req, res) => {
     try {
         const [categorias] = await db.query('SELECT * FROM categoria');
         res.json({
-            succes: true,
+            success: true,
             count: categorias.length,
             data: categorias
         })
@@ -23,12 +23,12 @@ const getCategoriaById = async (req, res) => {
         const [categoria] = await db.query('SELECT * FROM categoria WHERE id = ?', [id]);
         if (categoria.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Categoria con id " + id + " no encontrada."
             })
         }
         res.json({
-            succes: true,
+            success: true,
             data: categoria
         })
     } catch (error) {
@@ -45,13 +45,13 @@ const addCategoria = async (req, res) => {
         const { nombre } = req.body;
         if (!nombre) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "El nombre es obligatorio."
             })
         }
         const [categoria] = await db.query('INSERT INTO categoria (nombre) VALUES (?)', [nombre]);
         res.status(201).json({
-            succes: true,
+            success: true,
             mensaje: "Se creo correctamente",
             data: {
                 id: categoria.insertId,
@@ -74,13 +74,13 @@ const actualizarCategoria = async (req, res) => {
         const [categoria] = await db.query('SELECT * FROM categoria WHERE id = ?', [id]);
         if (categoria.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Categoria con id " + id + " no encontrada."
             })
         }
         await db.query('UPDATE categoria SET nombre = ? WHERE id = ?', [nombre, id]);
         res.status(201).json({
-            succes: true,
+            success: true,
             mensaje: "Se actualizo correctamente",
             data: { id, nombre }
         })
@@ -99,13 +99,13 @@ const eliminarCategoria = async (req, res) => {
         const [categoria] = await db.query('SELECT * FROM categoria WHERE id = ?', [id]);
         if (categoria.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Categoria con id " + id + " no encontrada."
             })
         }
         await db.query('DELETE FROM categoria WHERE id = ?', [id]);
         res.status(201).json({
-            succes: true,
+            success: true,
             mensaje: "Se elimino correctamente"
         })
     } catch (error) {

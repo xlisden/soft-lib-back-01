@@ -24,12 +24,12 @@ const getLibroById = async (req, res) => {
         const [libro] = await db.query('SELECT * FROM libros WHERE id = ?', [id]);
         if (libro.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Libro con id " + id + " no encontrado."
             })
         }
         res.json({
-            succes: true,
+            success: true,
             data: libro
         })
     } catch (error) {
@@ -47,13 +47,13 @@ const addLibro = async (req, res) => {
         const { titulo, autor, isbn, editorial, idcategoria, idautor } = req.body;
         if (!titulo || !autor) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Titulo y autor son obligatorios."
             })
         }
         const [libro] = await db.query('INSERT INTO libros (titulo, isbn, editorial, idcategoria, idautor) VALUES (?, ?, ?, ?, ?)', [titulo, isbn, editorial, idcategoria, idautor]);
         res.status(201).json({
-            succes: true,
+            success: true,
             mensaje: "Se creo correctamente",
             data: {
                 id: libro.insertId,
@@ -79,13 +79,13 @@ const actualizarLibro = async (req, res) => {
         const [libro] = await db.query('SELECT * FROM libros WHERE id = ?', [id]);
         if (libro.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Libro con id " + id + " no encontrado."
             })
         }
         const [response] = await db.query('UPDATE libros SET titulo =?,  isbn =?, editorial =?, idcategoria =?, idautor=? where id =? ', [titulo, isbn, editorial, idcategoria, idautor, id])
         res.status(201).json({
-            succes: true,
+            success: true,
             mensaje: "Se actualizo correctamente",
             data: {
                 id,
@@ -110,14 +110,14 @@ const eliminarLibro = async (req, res) => {
         const [libro] = await db.query('SELECT * FROM libros WHERE id = ?', [id]);
         if (libro.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Libro con id " + id + " no encontrado."
             })
         }
         
         const [response] = await db.query('DELETE FROM libros WHERE id = ?', [id]);        
         res.status(201).json({
-            succes: true,
+            success: true,
             mensaje: "Se elimino correctamente"
         })
     } catch (error) {
@@ -136,19 +136,19 @@ const getLibrosByCategoria = async (req, res) => {
         const [categoria] = await db.query('SELECT * FROM categoria WHERE id = ?', [id]);
         if (categoria.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Categoria con id " + id + " no encontrada."
             })
         }
         const [libros] = await db.query('SELECT * FROM libros WHERE idcategoria = ?', [id]);
         if (libros.length === 0) {
             return res.status(404).json({
-                succes: false,
+                success: false,
                 mensaje: "Libros con idcategoria " + id + " no encontrados."
             })
         }        
         res.status(200).json({
-            succes: true,
+            success: true,
             categoria: categoria[0],
             count: libros.length,
             data: libros
