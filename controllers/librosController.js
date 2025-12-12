@@ -2,7 +2,21 @@ const db = require('../config/db');
 
 const getLibros = async (req, res) => {
     try {
-        const [libros] = await db.query('SELECT * FROM libros');
+        const query = `
+            SELECT 
+                l.id, 
+                l.titulo, 
+                l.isbn, 
+                l.editorial, 
+                l.categoriaId,
+                l.autorId,
+                a.nombre AS autor,
+                c.nombre AS categoria
+            FROM libros l
+            JOIN autor a ON l.autorId = a.id
+            JOIN categoria c ON l.categoriaId = c.id
+        `;
+        const [libros] = await db.query(query);
         res.json({
             success: true,
             count: libros.length,
@@ -21,7 +35,22 @@ const getLibros = async (req, res) => {
 const getLibroById = async (req, res) => {
     try {
         const { id } = req.params;
-        const [libro] = await db.query('SELECT * FROM libros WHERE id = ?', [id]);
+        const query = `
+            SELECT 
+                l.id, 
+                l.titulo, 
+                l.isbn, 
+                l.editorial, 
+                l.categoriaId,
+                l.autorId,
+                a.nombre AS autor,
+                c.nombre AS categoria
+            FROM libros l
+            JOIN autor a ON l.autorId = a.id
+            JOIN categoria c ON l.categoriaId = c.id
+            WHERE l.id = ?
+        `;
+        const [libro] = await db.query(query, [id]);
         if (libro.length === 0) {
             return res.status(404).json({
                 success: false,
@@ -30,28 +59,28 @@ const getLibroById = async (req, res) => {
         }
         res.json({
             success: true,
-            data: libro
+            data: libro[0]
         })
     } catch (error) {
         res.status(500).json({
             sucess: false,
             mensaje: "Error en getLibroById()",
             data: error.mensaje
-        })        
+        })     
         console.log(`${error}`);
     }
 }
 
 const addLibro = async (req, res) => {
     try {
-        const { titulo, autor, isbn, editorial, idcategoria, idautor } = req.body;
-        if (!titulo || !autor) {
+        const { titulo, isbn, editorial, categoriaId, autorId } = req.body;
+        if (!titulo || !autorId || !categoriaId) {
             return res.status(404).json({
                 success: false,
-                mensaje: "Titulo y autor son obligatorios."
+                mensaje: "Titulo, autorId y categoriaId son obligatorios."
             })
         }
-        const [libro] = await db.query('INSERT INTO libros (titulo, isbn, editorial, idcategoria, idautor) VALUES (?, ?, ?, ?, ?)', [titulo, isbn, editorial, idcategoria, idautor]);
+        const [libro] = await db.query('INSERT INTO libros (titulo, isbn, editorial, categoriaId, autorId) VALUES (?, ?, ?, ?, ?)', [titulo, isbn, editorial, categoriaId, autorId]);
         res.status(201).json({
             success: true,
             mensaje: "Se creo correctamente",
@@ -59,7 +88,9 @@ const addLibro = async (req, res) => {
                 id: libro.insertId,
                 titulo,
                 isbn,
-                editorial
+                editorial,
+                categoriaId,
+                autorId
             }
         })
     } catch (error) {
@@ -75,7 +106,7 @@ const addLibro = async (req, res) => {
 const actualizarLibro = async (req, res) => {
     try {
         const { id } = req.params;
-        const { titulo, isbn, editorial, idcategoria, idautor } = req.body;
+        const { titulo, isbn, editorial, categoriaId, autorId } = req.body;
         const [libro] = await db.query('SELECT * FROM libros WHERE id = ?', [id]);
         if (libro.length === 0) {
             return res.status(404).json({
@@ -83,7 +114,7 @@ const actualizarLibro = async (req, res) => {
                 mensaje: "Libro con id " + id + " no encontrado."
             })
         }
-        const [response] = await db.query('UPDATE libros SET titulo =?,  isbn =?, editorial =?, idcategoria =?, idautor=? where id =? ', [titulo, isbn, editorial, idcategoria, idautor, id])
+        const [response] = await db.query('UPDATE libros SET titulo =?, isbn =?, editorial =?, categoriaId =?, autorId=? where id =? ', [titulo, isbn, editorial, categoriaId, autorId, id])
         res.status(201).json({
             success: true,
             mensaje: "Se actualizo correctamente",
@@ -91,7 +122,9 @@ const actualizarLibro = async (req, res) => {
                 id,
                 titulo,
                 isbn,
-                editorial
+                editorial,
+                categoriaId,
+                autorId
             }
         })
     } catch (error) {
@@ -115,7 +148,7 @@ const eliminarLibro = async (req, res) => {
             })
         }
         
-        const [response] = await db.query('DELETE FROM libros WHERE id = ?', [id]);        
+        const [response] = await db.query('DELETE FROM libros WHERE id = ?', [id]);     
         res.status(201).json({
             success: true,
             mensaje: "Se elimino correctamente"
@@ -140,13 +173,28 @@ const getLibrosByCategoria = async (req, res) => {
                 mensaje: "Categoria con id " + id + " no encontrada."
             })
         }
-        const [libros] = await db.query('SELECT * FROM libros WHERE idcategoria = ?', [id]);
+        const query = `
+            SELECT 
+                l.id, 
+                l.titulo, 
+                l.isbn, 
+                l.editorial, 
+                l.categoriaId,
+                l.autorId,
+                a.nombre AS autor,
+                c.nombre AS categoria
+            FROM libros l
+            JOIN autor a ON l.autorId = a.id
+            JOIN categoria c ON l.categoriaId = c.id
+            WHERE l.categoriaId = ?
+        `;
+        const [libros] = await db.query(query, [id]);
         if (libros.length === 0) {
             return res.status(404).json({
                 success: false,
                 mensaje: "Libros con idcategoria " + id + " no encontrados."
             })
-        }        
+        }     
         res.status(200).json({
             success: true,
             categoria: categoria[0],
